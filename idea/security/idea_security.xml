@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <record model="res.groups" id="group_idea_user">
+        <field name="name">Idea Users</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+
+</odoo>
+

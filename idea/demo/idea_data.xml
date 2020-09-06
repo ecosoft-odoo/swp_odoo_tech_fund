@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<odoo>
+    <record model="idea.category" id="idea_category_sales">
+        <field name="name">Sales</field>
+    </record>
+    <record model="idea.category" id="idea_category_general">
+        <field name="name">Organization</field>
+    </record>
+    <record model="idea.category" id="idea_category_technical">
+        <field name="name">Technical</field>
+    </record>
+
+    <record id="base.user_demo" model="res.users">
+        <field name="groups_id" eval="[(4,ref('group_idea_user'))]"/>
+    </record>
+</odoo>
