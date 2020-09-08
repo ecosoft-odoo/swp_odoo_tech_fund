@@ -65,7 +65,7 @@ class IdeaIdea(models.Model):
     )
     user_id = fields.Many2one(
         comodel_name="res.users",
-        string="Idea's Owner",
+        string="Idea Owner",
         required=True,
     )
 

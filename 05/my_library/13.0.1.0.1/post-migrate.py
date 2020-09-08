@@ -7,9 +7,9 @@ from datetime import date
 
 def migrate(cr, version):
     x = 1/0
-    cr.execute('SELECT id, date_release_char FROM library_book')
+    cr.execute("SELECT id, date_release_char FROM library_book")
     for record_id, old_date in cr.fetchall():
-        # check if the field happens to be set in Odoo's internal
+        # check if the field happens to be set in Odoo"s internal
         # format
         new_date = None
         try:
@@ -23,5 +23,5 @@ def migrate(cr, version):
                 # order ...
                 pass
         if new_date:
-            cr.execute('UPDATE library_book SET date_release=%s',
+            cr.execute("UPDATE library_book SET date_release=%s",
                        (new_date,))

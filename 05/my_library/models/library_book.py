@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from odoo import models, fields, api
-from odoo.exceptions import ValidationError
+from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError, UserError
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -25,11 +25,11 @@ class LibraryBook(models.Model):
         string="Internal Notes",
     )
     state = fields.Selection(
-        selection=[("draft", "Not Available"),
-                   ("available", "Available"),
+        selection=[("available", "Available"),
+                   ("borrowed", "Borrowed"),
                    ("lost", "Lost")],
         string="State",
-        default="draft",
+        default="available",
     )
     description = fields.Html(
         string="Description",
@@ -119,33 +119,33 @@ class LibraryBook(models.Model):
     @api.model
     def update_book_price(self):
         # NOTE: Real cases can be complex but here we just increse cost price by 10
-        _logger.info('Method update_book_price called from XML')
+        _logger.info("Method update_book_price called from XML")
         all_books = self.search([])
         for book in all_books:
             book.cost_price += 10
 
     def make_available(self):
         self.ensure_one()
-        self.state = 'available'
+        self.state = "available"
 
     def make_borrowed(self):
         self.ensure_one()
-        self.state = 'borrowed'
+        self.state = "borrowed"
 
     def make_lost(self):
         self.ensure_one()
-        self.state = 'lost'
-        if not self.env.context.get('avoid_deactivate'):
+        self.state = "lost"
+        if not self.env.context.get("avoid_deactivate"):
             self.active = False
 
     def book_rent(self):
         self.ensure_one()
-        if self.state != 'available':
-            raise UserError(_('Book is not available for renting'))
-        rent_as_superuser = self.env['library.book.rent'].sudo()
+        if self.state != "available":
+            raise UserError(_("Book is not available for renting"))
+        rent_as_superuser = self.env["library.book.rent"].sudo()
         rent_as_superuser.create({
-            'book_id': self.id,
-            'borrower_id': self.env.user.partner_id.id,
+            "book_id": self.id,
+            "borrower_id": self.env.user.partner_id.id,
         })
 
     def average_book_occupation(self):
@@ -165,13 +165,13 @@ class LibraryBook(models.Model):
 
     def return_all_books(self):
         self.ensure_one()
-        wizard = self.env['library.return.wizard']
+        wizard = self.env["library.return.wizard"]
         values = {
-            'borrower_id': self.env.user.partner_id.id,
+            "borrower_id": self.env.user.partner_id.id,
         }
         specs = wizard._onchange_spec()
-        updates = wizard.onchange(values, ['borrower_id'], specs)
-        value = updates.get('value', {})
+        updates = wizard.onchange(values, ["borrower_id"], specs)
+        value = updates.get("value", {})
         for name, val in value.items():
             if isinstance(val, tuple):
                 value[name] = val[0]
