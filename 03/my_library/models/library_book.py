@@ -99,6 +99,19 @@ class LibraryBook(models.Model):
             if record.date_release and record.date_release > fields.Date.today():
                 raise models.ValidationError("Release date must be in the past")
 
+    def grouped_data(self):
+        data = self._get_average_cost()
+        _logger.info("Groupped Data %s" % data)
+
+    @api.model
+    def _get_average_cost(self):
+        grouped_result = self.read_group(
+            [("cost_price", "!=", False)], # Domain
+            ["category_id", "cost_price:avg"], # Fields to access
+            ["category_id"] # group_by
+            )
+        return grouped_result
+
 
 class ResPartner(models.Model):
     _inherit = "res.partner"
