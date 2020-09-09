@@ -86,6 +86,14 @@ class LibraryBook(models.Model):
     category_id = fields.Many2one(
         comodel_name="library.book.category",
     )
+    age_days = fields.Float(
+        string="Days Since Release",
+        compute="_compute_age",
+        inverse="_inverse_age",
+        search="_search_age",
+        store=False, 	# optional
+        compute_sudo=False # optional
+    )
     _sql_constraints = [("name_uniq", "UNIQUE (name)", "Book title must be unique.")]
 
     def name_get(self):

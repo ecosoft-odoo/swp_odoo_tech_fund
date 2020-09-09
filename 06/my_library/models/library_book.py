@@ -86,6 +86,14 @@ class LibraryBook(models.Model):
     category_id = fields.Many2one(
         comodel_name="library.book.category",
     )
+    age_days = fields.Float(
+        string="Days Since Release",
+        compute="_compute_age",
+        inverse="_inverse_age",
+        search="_search_age",
+        store=False, 	# optional
+        compute_sudo=False # optional
+    )
     active = fields.Boolean(default=True)
     is_public = fields.Boolean(groups="my_library.group_library_librarian")
     private_notes = fields.Text(groups="my_library.group_library_librarian")
@@ -108,6 +116,29 @@ class LibraryBook(models.Model):
         for record in self:
             if record.date_release and record.date_release > fields.Date.today():
                 raise models.ValidationError("Release date must be in the past")
+
+    @api.depends('date_release')
+    def _compute_age(self):
+        today = fields.Date.today()
+        for book in self.filtered('date_release'):
+            delta = today - book.date_release
+            book.age_days = delta.days
+
+    def _inverse_age(self):
+        today = fields.Date.today()
+        for book in self.filtered('date_release'):
+            d = today - timedelta(days=book.age_days)
+            book.date_release = d
+
+    def _search_age(self, operator, value):
+        today = fields.Date.today()
+        value_days = timedelta(days=value)
+        value_date = today - value_days
+        # convert the operator:
+        # book with age > value have a date < value_date
+        operator_map = {'>': '<', '>=': '<=', '<': '>', '<=': '>=', }
+        new_op = operator_map.get(operator, operator)
+        return [('date_release', new_op, value_date)]
 
     def grouped_data(self):
         data = self._get_average_cost()
