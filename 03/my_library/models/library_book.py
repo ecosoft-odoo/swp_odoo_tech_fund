@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
+import logging
+from datetime import timedelta
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class LibraryBook(models.Model):
@@ -61,7 +65,7 @@ class LibraryBook(models.Model):
         comodel_name="res.partner",
         string="Authors",
     )
-    cost_price = fields.Float(
+    cost_price = fields.Monetary(
         string="Book Cost",
         digits="Book Price",
     )
