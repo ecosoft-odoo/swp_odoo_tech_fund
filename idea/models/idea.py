@@ -63,11 +63,6 @@ class IdeaIdea(models.Model):
         readonly=True,
         track_visibility="onchange",
     )
-    user_id = fields.Many2one(
-        comodel_name="res.users",
-        string="Idea Owner",
-        required=True,
-    )
 
     _sql_constraints = [
         ("name", "unique(name)", "The name of the idea must be unique")
