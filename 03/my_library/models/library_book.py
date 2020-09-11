@@ -111,12 +111,15 @@ class LibraryBook(models.Model):
             if record.date_release and record.date_release > fields.Date.today():
                 raise models.ValidationError("Release date must be in the past")
 
-    @api.depends('date_release')
+    @api.depends("date_release")
     def _compute_age(self):
         today = fields.Date.today()
-        for book in self.filtered('date_release'):
-            delta = today - book.date_release
-            book.age_days = delta.days
+        for book in self:
+            if book.date_release:
+                delta = today - book.date_release
+                book.age_days = delta.days
+            else:
+                book.age_days = False
 
     def _inverse_age(self):
         today = fields.Date.today()
@@ -146,6 +149,16 @@ class LibraryBook(models.Model):
             ["category_id"] # group_by
             )
         return grouped_result
+
+    @api.model
+    def create(self, vals):
+        vals["description"] = "Created by %s" % self.env.user.name
+        return super().create(vals)
+
+
+    def write(self, vals):
+        vals["date_updated"] = fields.Datetime.now()
+        return super().write(vals)
 
 
 class ResPartner(models.Model):
