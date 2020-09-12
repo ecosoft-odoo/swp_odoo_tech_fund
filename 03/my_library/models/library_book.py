@@ -150,16 +150,6 @@ class LibraryBook(models.Model):
             )
         return grouped_result
 
-    @api.model
-    def create(self, vals):
-        vals["description"] = "Created by %s" % self.env.user.name
-        return super().create(vals)
-
-
-    def write(self, vals):
-        vals["date_updated"] = fields.Datetime.now()
-        return super().write(vals)
-
 
 class ResPartner(models.Model):
     _inherit = "res.partner"
