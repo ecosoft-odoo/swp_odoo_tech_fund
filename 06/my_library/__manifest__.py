@@ -8,11 +8,12 @@ Long description of this module
     "website": "http://www.example.com",
     "category": "Uncategorized",
     "version": "13.0.1.0.1",
-    "depends": ["base"],
+    "depends": ["base", "contacts"],
     "data": [
         "security/groups.xml",
         "security/ir.model.access.csv",
         "security/library_security.xml",
+        "views/res_partner.xml",
         "views/library_book.xml",
         "views/library_book_categ.xml",
         "views/library_book_rent.xml",
