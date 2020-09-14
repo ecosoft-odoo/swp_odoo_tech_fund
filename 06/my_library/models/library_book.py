@@ -98,7 +98,7 @@ class LibraryBook(models.Model):
     is_public = fields.Boolean(groups="my_library.group_library_librarian")
     private_notes = fields.Text(groups="my_library.group_library_librarian")
     report_missing = fields.Text(
-        string="Bokk is missing",
+        string="Book is missing",
         groups="my_library.group_library_librarian")
 
     _sql_constraints = [("name_uniq", "UNIQUE (name)", "Book title must be unique.")]
